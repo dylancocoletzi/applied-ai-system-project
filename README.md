@@ -51,6 +51,39 @@ score = 0.35 · genre_match
 
 ---
 
+## Sample Recommendation Output
+
+Output of `python3 src/main.py` for the starter profile (`genre=pop, mood=happy, energy=0.8, likes_acoustic=False`):
+
+```
+Top recommendations for profile: {'genre': 'pop', 'mood': 'happy', 'energy': 0.8, 'likes_acoustic': False}
+
+1. Sunrise City — Neon Echo  (score: 0.97)
+     - matches your favorite genre (pop)
+     - matches your favorite mood (happy)
+     - energy (0.82) is close to your target (0.80)
+     - energetic, non-acoustic sound fits your preference
+
+2. Gym Hero — Max Pulse  (score: 0.71)
+     - matches your favorite genre (pop)
+     - energy (0.93) is close to your target (0.80)
+     - energetic, non-acoustic sound fits your preference
+
+3. Rooftop Lights — Indigo Parade  (score: 0.59)
+     - matches your favorite mood (happy)
+     - energy (0.76) is close to your target (0.80)
+
+4. Concrete Kingdom — MC Ledger  (score: 0.38)
+     - energy (0.85) is close to your target (0.80)
+     - energetic, non-acoustic sound fits your preference
+
+5. Broken Compass — Nine Hollow  (score: 0.36)
+     - energy (0.88) is close to your target (0.80)
+     - energetic, non-acoustic sound fits your preference
+```
+
+---
+
 ## Getting Started
 
 ### Setup
@@ -83,23 +116,6 @@ pytest
 ```
 
 You can add more tests in `tests/test_recommender.py`.
-
----
-
-## Sample Recommendation Output
-
-Paste a sample of your recommender's output here as a text block so a reader can see what it produces:
-
-```
-# e.g.:
-# User profile: genre=indie, mood=chill, energy=low
-# Recommendations:
-#   1. ...
-#   2. ...
-#   3. ...
-```
-
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or demo video link here -->
 
 ---
 

@@ -50,10 +50,7 @@ INT_FIELDS = ("id",)
 FLOAT_FIELDS = ("energy", "tempo_bpm", "valence", "danceability", "acousticness")
 
 def load_songs(csv_path: str) -> List[Dict]:
-    """
-    Loads songs from a CSV file.
-    Required by src/main.py
-    """
+    """Loads songs from a CSV file into a list of dicts, converting numeric fields to int/float."""
     songs = []
     with open(csv_path, newline="") as f:
         for row in csv.DictReader(f):
@@ -70,10 +67,7 @@ ENERGY_WEIGHT = 0.25
 ACOUSTIC_WEIGHT = 0.15
 
 def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
-    """
-    Scores a single song against user preferences.
-    Required by recommend_songs() and src/main.py
-    """
+    """Scores one song against user_prefs via weighted genre/mood/energy/acoustic matching, returning (score, reasons)."""
     genre_match = song["genre"] == user_prefs.get("genre")
     mood_match = song["mood"] == user_prefs.get("mood")
 
@@ -106,10 +100,7 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     return score, reasons
 
 def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
-    """
-    Functional implementation of the recommendation logic.
-    Required by src/main.py
-    """
+    """Scores every song, ranks them by score descending, and returns the top k as (song, score, explanation)."""
     # Judge: score every song in the catalog, in isolation, using score_song.
     scored = [(song, *score_song(user_prefs, song)) for song in songs]
 
