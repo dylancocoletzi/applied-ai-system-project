@@ -17,17 +17,21 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+**Real-world context:** Spotify/YouTube blend *collaborative filtering* (recommend based on similar users' behavior) with *content-based filtering* (recommend based on item attributes). Collaborative filtering needs lots of user history and struggles with new users/songs; content-based doesn't. This project implements the **content-based** half only — simpler and cold-start-friendly, but unable to break out of a user's stated tastes the way "similar users liked this" can.
 
-Some prompts to answer:
+**Song features used:** `genre`, `mood`, `energy`, `acousticness`. (We skip `tempo_bpm` and `danceability` in scoring — they correlate strongly with `energy`, r ≈ 0.86–0.96, so including them would just triple-count the same signal.)
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+**UserProfile stores:** `favorite_genre`, `favorite_mood`, `target_energy` (0–1), `likes_acoustic` (bool).
 
-You can include a simple diagram or bullet list if helpful.
+**Scoring rule (`score_song`)** — one weighted score per song, in isolation:
+- `0.35 ×` genre match (exact)
+- `0.25 ×` mood match (exact)
+- `0.25 ×` energy closeness: `1 - abs(target_energy - song.energy)` — rewards being *close to* the target, not just high/low
+- `0.15 ×` acoustic fit: `acousticness` if `likes_acoustic` else `1 - acousticness`
+
+Genre is weighted highest as the most stable taste signal; mood/energy are situational refinements; acousticness is a niche preference.
+
+**Ranking rule (`recommend_songs`):** scoring judges one song at a time; ranking needs the whole catalog to decide order. We sort all songs by score, descending, and return the top `k`.
 
 ---
 
