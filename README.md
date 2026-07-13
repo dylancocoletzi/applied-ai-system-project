@@ -33,6 +33,22 @@ Genre is weighted highest as the most stable taste signal; mood/energy are situa
 
 **Ranking rule (`recommend_songs`):** scoring judges one song at a time; ranking needs the whole catalog to decide order. We sort all songs by score, descending, and return the top `k`.
 
+### Finalized Algorithm Recipe
+
+```
+score = 0.35 · genre_match
+      + 0.25 · mood_match
+      + 0.25 · (1 - abs(target_energy - song.energy))
+      + 0.15 · (acousticness if likes_acoustic else 1 - acousticness)
+```
+
+**Data flow:** `user_prefs` (dict) + `load_songs()` → **loop** every song through `score_song` in isolation (Scoring Rule) → **sort** the scored list descending and slice top `k` (Ranking Rule) → `(song, score, explanation)` results.
+
+**Expected biases:**
+- Fixed weights apply to every user the same way — the recipe can't learn that one person actually weighs mood over genre.
+- Because there's no collaborative signal, recommendations can't break out of a user's stated `genre`/`mood`, which risks a filter-bubble effect (never surfacing something outside declared taste).
+- Genres/moods with more songs in the catalog have a better chance of landing an exact match; thinner genres are underrepresented in top-k results purely from smaller supply, not lower relevance.
+
 ---
 
 ## Getting Started
