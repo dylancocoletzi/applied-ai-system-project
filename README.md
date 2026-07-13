@@ -84,6 +84,97 @@ Top recommendations for profile: {'genre': 'pop', 'mood': 'happy', 'energy': 0.8
 
 ---
 
+## Edge Case Output
+
+```
+=== Typo Genre (case mismatch) ===
+
+Top recommendations for profile: {'genre': 'Rock', 'mood': 'Happy', 'energy': 0.7, 'likes_acoustic': False}
+
+1. Night Drive Loop — Neon Echo  (score: 0.35)
+     - energy (0.75) is close to your target (0.70)
+     - energetic, non-acoustic sound fits your preference
+
+2. Concrete Kingdom — MC Ledger  (score: 0.35)
+     - energy (0.85) is close to your target (0.70)
+     - energetic, non-acoustic sound fits your preference
+
+3. Sunrise City — Neon Echo  (score: 0.34)
+     - energy (0.82) is close to your target (0.70)
+     - energetic, non-acoustic sound fits your preference
+
+=== Overshoot Energy (target > 1.0) ===
+
+Top recommendations for profile: {'genre': 'pop', 'mood': 'happy', 'energy': 1.4, 'likes_acoustic': False}
+
+1. Sunrise City — Neon Echo  (score: 0.83)
+     - matches your favorite genre (pop)
+     - matches your favorite mood (happy)
+     - energetic, non-acoustic sound fits your preference
+
+2. Gym Hero — Max Pulse  (score: 0.62)
+     - matches your favorite genre (pop)
+     - energetic, non-acoustic sound fits your preference
+
+3. Rooftop Lights — Indigo Parade  (score: 0.44)
+     - matches your favorite mood (happy)
+
+=== String Acoustic Flag (truthy-string bug) ===
+
+Top recommendations for profile: {'genre': 'lofi', 'mood': 'chill', 'energy': 0.4, 'likes_acoustic': 'false'}
+
+1. Library Rain — Paper Lanterns  (score: 0.97)
+     - matches your favorite genre (lofi)
+     - matches your favorite mood (chill)
+     - energy (0.35) is close to your target (0.40)
+     - acoustic sound fits your preference
+
+2. Midnight Coding — LoRoom  (score: 0.95)
+     - matches your favorite genre (lofi)
+     - matches your favorite mood (chill)
+     - energy (0.42) is close to your target (0.40)
+     - acoustic sound fits your preference
+
+3. Focus Flow — LoRoom  (score: 0.72)
+     - matches your favorite genre (lofi)
+     - energy (0.40) is close to your target (0.40)
+     - acoustic sound fits your preference
+
+=== Unknown Genre (not in catalog) ===
+
+Top recommendations for profile: {'genre': 'k-pop', 'mood': 'euphoric', 'energy': 0.8, 'likes_acoustic': False}
+
+1. Warehouse Pulse — Kilo Static  (score: 0.53)
+     - matches your favorite mood (euphoric)
+     - energetic, non-acoustic sound fits your preference
+
+2. Concrete Kingdom — MC Ledger  (score: 0.38)
+     - energy (0.85) is close to your target (0.80)
+     - energetic, non-acoustic sound fits your preference
+
+3. Sunrise City — Neon Echo  (score: 0.37)
+     - energy (0.82) is close to your target (0.80)
+     - energetic, non-acoustic sound fits your preference
+
+=== Contradiction (no real match exists) ===
+
+Top recommendations for profile: {'genre': 'metal', 'mood': 'chill', 'energy': 0.1, 'likes_acoustic': True}
+
+1. Spacewalk Thoughts — Orbit Bloom  (score: 0.59)
+     - matches your favorite mood (chill)
+     - acoustic sound fits your preference
+
+2. Library Rain — Paper Lanterns  (score: 0.57)
+     - matches your favorite mood (chill)
+     - acoustic sound fits your preference
+
+3. Midnight Coding — LoRoom  (score: 0.53)
+     - matches your favorite mood (chill)
+     - acoustic sound fits your preference
+```
+
+---
+
 ## Getting Started
 
 ### Setup

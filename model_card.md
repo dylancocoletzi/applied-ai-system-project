@@ -61,29 +61,32 @@ Prompts:
 
 ## 6. Limitations and Bias 
 
-Where the system struggles or behaves unfairly. 
+**Features not considered:** tempo, danceability, valence, lyrics, and other users' behavior (no collaborative filtering).
 
-Prompts:  
+**Underrepresented genres/moods:** 10 of 20 songs are the only song in their genre. No songs exist below 0.2 energy, so very-calm listeners never get a close match.
 
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+**Overfitting to one preference:** `genre` is a high-weight, all-or-nothing match, so it acts as a hard gate — the system rarely recommends outside a user's stated genre (filter-bubble risk). A single `target_energy` also can't represent bimodal taste (e.g., likes both calm and intense music).
+
+**Unintentional favoritism:** exact-string genre matching gives zero credit to close variants (e.g. "indie" vs. "indie pop"). Users whose target energy falls in the catalog's denser range (0.4–1.0) get better matches than those at the sparse low end.
+
+**Weakness found during experiments:** setting the mood weight to zero flipped our "High-Energy Pop" profile's top pick from Sunrise City to Gym Hero, with no change to the songs themselves. This showed Sunrise City's #1 rank depended almost entirely on one component (mood), not a broad overall fit — a fragility the explanation text doesn't reveal. It means small, equally reasonable weight changes can overturn the "best" recommendation for the same user and catalog.
 
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
+**Profiles tested:** High-Energy Pop, Chill Lofi, Deep Intense Rock, Acoustic Folk Dreamer, Euphoric House Head, plus 5 adversarial edge cases (typo genre, out-of-range energy, truthy-string bug, unknown genre, contradictory prefs — see README).
 
-Prompts:  
+**What we looked for:** whether each top pick's listed reasons actually match human intuition, and whether changing one trait (genre, mood, energy, acoustic) visibly moved the ranking.
 
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
+**What surprised us — why "Gym Hero" keeps showing up:** Gym Hero (pop, but mood = *intense*, very high energy, non-acoustic) turned up as a strong runner-up for three unrelated profiles — Happy Pop, Deep Intense Rock, *and* Euphoric House. In plain terms: imagine picking a restaurant by scoring crust, toppings, price, and speed. A place with so-so toppings but amazing crust and lightning-fast delivery can still win even if price wasn't your main ask — because it racked up enough points elsewhere. Gym Hero is that restaurant: it doesn't nail "happy," but it's so loud and electric that it still earns enough energy + acoustic points to land near the top for almost anyone who wants high-energy music, regardless of their actual genre or mood.
 
-No need for numeric metrics unless you created some.
+**Profile comparisons:**
+- *High-Energy Pop vs. Chill Lofi:* Pop lands on Sunrise City (loud, electric); Lofi lands on Library Rain (soft, acoustic) — makes sense, energy and acoustic pull in opposite directions.
+- *Chill Lofi vs. Deep Intense Rock:* completely disjoint top picks (Library Rain vs. Storm Runner) — these two profiles want opposite moods and energy levels, so no song satisfies both.
+- *Deep Intense Rock vs. Acoustic Folk Dreamer:* Rock favors loud/electric (Storm Runner); Folk favors acoustic/nostalgic (Wildflower Fields) — the acoustic-fit component flips direction between them.
+- *Acoustic Folk Dreamer vs. Euphoric House Head:* same story in reverse — Folk wants acoustic, House wants electric/euphoric (Warehouse Pulse) — again fully different winners.
+- *High-Energy Pop vs. Euphoric House Head:* different genres and moods, but both want high energy + non-acoustic, so Gym Hero shows up as a solid secondary pick in both — evidence that energy/acoustic alone can pull the same "generically loud" song across genre lines.
 
 ---
 
