@@ -11,7 +11,7 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
+This version is a content-based recommender: each song and each listener's stated taste profile (genre, mood, energy, acousticness) get turned into a single weighted score, the whole catalog gets ranked by that score, and the top few come back with a plain-English reason for each pick.
 
 ---
 
@@ -212,25 +212,20 @@ You can add more tests in `tests/test_recommender.py`.
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
-
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+- **Doubled the energy weight (0.25→0.50) and halved the genre weight (0.35→0.175):** for "Deep Intense Rock," the bottom three results reordered purely from amplified energy differences — Iron Verdict dropped from #3 to #5 despite having the best acoustic fit, because its energy match was slightly worse than Broken Compass's. For "High-Energy Pop," Rooftop Lights overtook Gym Hero — Gym Hero's edge (a genre match) got weaker while Rooftop Lights' edge (a closer energy match) got stronger.
+- **Set the mood weight to 0** to see how much it mattered: for "Deep Intense Rock" the ranking didn't change (both top songs happened to match the target mood, so both lost equally). For "High-Energy Pop," the #1 pick flipped from Sunrise City to Gym Hero — only Sunrise City had a mood match, so removing mood's weight erased its entire advantage.
+- **Ran 5 real user profiles + 5 adversarial edge-case profiles** (see Sample Recommendation Output and Edge Case Output above) — different profiles reliably pulled toward opposite ends of the energy/acoustic scale (e.g. Chill Lofi → soft/acoustic picks, Deep Intense Rock → loud/electric picks), confirming the scoring recipe is actually sensitive to the inputs it's supposed to be sensitive to.
 
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
+- Small catalog (20 songs), and 10 of the 20 genres have only one song each — a niche taste has no backup match if its one song is a poor fit.
+- No songs below 0.2 energy, so very-calm listeners can never get a close energy match.
+- `genre` is a high-weight, all-or-nothing match, so the system rarely recommends outside a user's stated genre — a real filter-bubble risk.
+- Doesn't understand lyrics, language, or popularity — and has no collaborative signal (no notion of "other users"), so it can't recommend anything outside what a user explicitly states.
 
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+Full depth on this — including exact numbers and an experiment that exposed a real fragility — is in the model card.
 
 ---
 
@@ -240,10 +235,9 @@ Read and complete `model_card.md`:
 
 [**Model Card**](model_card.md)
 
-Write 1 to 2 paragraphs here about what you learned:
+Building this made it clear that a "recommendation" isn't magic — it's just data (song attributes) and a taste profile compared through fixed arithmetic, then sorted. Every prediction can be traced back to exactly which weighted components matched, which is both the system's strength (fully explainable) and its ceiling (it can never suggest anything the math didn't already point to).
 
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+Bias shows up in quiet ways: a high, all-or-nothing weight on genre means the system rarely recommends outside a user's stated genre, and thin catalog coverage (many genres have just one song) means a niche taste gets one shot at a good match instead of several. Our weight-tuning experiment made this concrete — zeroing out the mood weight was enough to flip the "best" recommendation for one profile entirely, showing how much a single design choice, invisible to the end user, can decide what gets called "personalized."
 
 
 
