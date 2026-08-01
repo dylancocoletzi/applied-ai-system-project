@@ -9,7 +9,10 @@ You will implement the functions in recommender.py:
 - recommend_songs
 """
 
-from recommender import load_songs, recommend_songs
+try:
+    from src.recommender import load_songs, recommend_songs
+except ImportError:
+    from recommender import load_songs, recommend_songs
 
 
 USER_PROFILES = {
