@@ -1,0 +1,41 @@
+flowchart TD
+    subgraph BASE["Base Project: VibeFit 1.0 (unmodified)"]
+        MAIN["src/main.py\nUSER_PROFILES / EDGE_CASE_PROFILES"]
+    end
+
+    subgraph EXT["Extended System: VibeFit Agent"]
+        UI["Streamlit UI\nsrc/app.py\nfree-text vibe input"]
+        PLAN["Plan: parse_vibe_text()\nsrc/agent.py\nkeyword matching -> profile + per-field confidence"]
+        GUARD["Guardrail: validate_profile()\nsrc/guardrails.py\ntype coercion, clamping, normalization"]
+        SCORE["Act: score_song() / recommend_songs()\nsrc/recommender.py (unmodified)"]
+        CHECK["Check: critique()\nsrc/agent.py\ncontradiction + low-confidence flags"]
+        LOG["Log event\nlogs/agent_activity.log (JSON Lines)"]
+        OUT["Output: ranked results +\ninterpretation + warnings + recent activity"]
+    end
+
+    subgraph VERIFY["Where humans / testing check the AI's results"]
+        TEST["Automated testing\npytest + scripts/eval_harness.py\nchecks determinism, score bounds, malformed input,\nand that contradiction/low-confidence flags actually fire"]
+        HUMAN["Human (the user)\nreads the interpretation table, guardrail notes, and\nself-check warnings in the UI before trusting a result"]
+    end
+
+    CSV[("data/songs.csv\n20 songs, 17 genres, 16 moods")]
+
+    MAIN --> SCORE
+
+    UI --> PLAN
+    PLAN --> GUARD
+    GUARD --> SCORE
+    SCORE --> CHECK
+    CHECK --> LOG
+    CHECK --> OUT
+    OUT --> HUMAN
+    HUMAN -.->|refines request if unsatisfied| UI
+
+    CSV --> SCORE
+    CSV --> PLAN
+    CSV --> CHECK
+
+    TEST -.->|exercises with known + adversarial inputs| PLAN
+    TEST -.->|exercises| GUARD
+    TEST -.->|exercises| SCORE
+    TEST -.->|exercises| CHECK
